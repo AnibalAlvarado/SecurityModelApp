@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, Button,StyleSheet } from "react-native";
-import BookForm from "../components/PersonForm";
-import { create } from "../api/apiService";
-import { IPerson } from "../api/types/IPerson";
+import BookForm from "../../components/PersonForm";
+import { create } from "../../api/apiService";
+import { IPerson } from "../../api/types/IPerson";
 
 const PersonRegisterScreen = () => {
  const [form, setForm] = useState<IPerson>({

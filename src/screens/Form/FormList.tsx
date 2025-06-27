@@ -10,34 +10,34 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { PersonStackParamsList } from "../navigations/types";
-import CardPerson from "../components/CardPerson";
-import { getAllEntity } from "../api/apiService";
-import { IPerson } from "../api/types/IPerson";
+import { FormStackParamsList, PersonStackParamsList } from "../../navigations/types";
+import { getAllEntity } from "../../api/apiService";
+import { IForm } from "../../api/types/IForm";
+import CardGeneric from "../../components/CardGeneric";
 
-type PersonScreenNavigationProp = NativeStackNavigationProp<
-  PersonStackParamsList,
-  "PersonList"
+type FormScreenNavigationProp = NativeStackNavigationProp<
+  FormStackParamsList,
+  "FormList"
 >;
 
-const PersonList = () => {
-  const navigation = useNavigation<PersonScreenNavigationProp>();
-  const [persons, setPersons] = useState<IPerson[]>([]);
+const FormList = () => {
+  const navigation = useNavigation<FormScreenNavigationProp>();
+  const [forms, setForms] = useState<IForm[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false); // ⬅️ para botón
 
-  const fetchPersons = useCallback(async () => {
+  const fetchForms = useCallback(async () => {
     if (!loading) setRefreshing(true);
     setLoading(true);
-    const result = await getAllEntity("Person");
-    setPersons(result);
+    const result = await getAllEntity("Form");
+    setForms(result);
     setLoading(false);
     setRefreshing(false); // ⬅️ apaga loading del botón
   }, []);
 
   useEffect(() => {
-    fetchPersons();
-  }, [fetchPersons]);
+    fetchForms();
+  }, [fetchForms]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -45,14 +45,14 @@ const PersonList = () => {
       <View style={styles.buttonsRow}>
         <TouchableOpacity
           style={styles.buttonBlue}
-          onPress={() => navigation.navigate("PersonRegister")}
+          onPress={() => navigation.navigate("FormSave")}
         >
-          <Text style={styles.buttonText}>➕ Add person</Text>
+          <Text style={styles.buttonText}>➕ Add Form</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.buttonGreen}
-          onPress={fetchPersons}
+          onPress={fetchForms}
           disabled={refreshing}
         >
           {refreshing ? (
@@ -67,15 +67,13 @@ const PersonList = () => {
         <ActivityIndicator size="large" color="#1e90ff" style={{ marginTop: 20 }} />
       ) : (
         <FlatList
-          data={persons}
+          data={forms}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <CardPerson
-              {...item}
-              onEdit={(id) => navigation.navigate("PersonUpdate", { id: String(id) })}
-              onDelete={(id) => {
-                console.log("Eliminar persona con ID:", id);
-              }}
+            <CardGeneric
+            item={item}
+            onEdit={(id) => navigation.navigate("FormUpdate", { id: Number(id) })}
+            onDelete={(id) => console.log("Eliminar", id)}
             />
           )}
         />
@@ -113,4 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PersonList;
+export default FormList;

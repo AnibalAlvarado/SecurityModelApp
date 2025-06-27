@@ -1,30 +1,44 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { IPerson } from "../api/types/IPerson"; // Ajusta ruta si es diferente
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 
-interface Props extends IPerson {
+interface GenericCardProps<T> {
+  item: T & { id: number; asset?: boolean };
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
 }
 
-const CardPerson: React.FC<Props> = ({
-  id,
-  firstName,
-  lastName,
-  phoneNumber,
-  asset,
+function CardGeneric<T extends object>({
+  item,
   onEdit,
   onDelete,
-}) => {
+}: GenericCardProps<T>) {
+  const { id, asset, ...rest } = item;
+
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{firstName} {lastName}</Text>
-      <Text style={styles.text}>📞 {phoneNumber}</Text>
-      <Text style={styles.text}>ID: {id}</Text>
-      <Text style={[styles.status, { color: asset ? "green" : "red" }]}>
-        {asset ? "✔️ Activo" : "❌ Inactivo"}
-      </Text>
+      {/* Render dinámico de las propiedades (excepto id y asset) */}
+      {Object.entries(rest).map(([key, value]) => (
+        <Text style={styles.text} key={key}>
+          {key.charAt(0).toUpperCase() + key.slice(1)}: {String(value)}
+        </Text>
+      ))}
 
+      {/* Mostrar ID */}
+      <Text style={styles.text}>ID: {id}</Text>
+
+      {/* Estado "activo/inactivo" si existe */}
+      {"asset" in item && (
+        <Text style={[styles.status, { color: asset ? "green" : "red" }]}>
+          {asset ? "✔️ Activo" : "❌ Inactivo"}
+        </Text>
+      )}
+
+      {/* Botones */}
       <View style={styles.buttonRow}>
         <TouchableOpacity style={styles.editButton} onPress={() => onEdit(id)}>
           <Text style={styles.buttonText}>Editar</Text>
@@ -35,7 +49,7 @@ const CardPerson: React.FC<Props> = ({
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   card: {
@@ -50,14 +64,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
   text: {
     fontSize: 14,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   status: {
     marginTop: 8,
@@ -90,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CardPerson;
+export default CardGeneric;

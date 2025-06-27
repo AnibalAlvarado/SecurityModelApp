@@ -38,47 +38,80 @@ export const getAllEntity = async (entityName: string) => {
   }
 };
 
-export const getByIdBook = async (id: number) => {
+/**
+ * GET - Obtener por ID
+ */
+export const getById = async <T>(entityName: string, id: number | string): Promise<T | null> => {
   try {
-    const response = await fetch(API_BASE_URL + id);
+    const response = await fetch(`${API_BASE_URL}/${entityName}/${id}`);
+    if (!response.ok) throw new Error(`Error al obtener ${entityName} con ID ${id}`);
 
-    if (!response.ok) throw new Error("Error al actualizar el libro");
-    let data = await response.json();
-    console.log(data);
-    return data;
+    const json = await response.json();
+    return json.data as T; // 👈 Devuelve solo el `data`, igual que en getAllEntity
   } catch (error) {
-    return error;
+    console.error("Error en getById:", error);
+    return null;
   }
 };
 
-export const updateBook = async (id: number, register: IPerson) => {
+/**
+ * PUT - Actualizar
+ */
+/**
+ * PUT - Actualizar
+ */
+export const update = async <T>(
+  entityName: string,
+  id: number | string,
+  data: T
+): Promise<T | null> => {
   try {
-    const response = await fetch(API_BASE_URL + id, {
+    const response = await fetch(`${API_BASE_URL}/${entityName}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(register),
+      body: JSON.stringify(data),
     });
 
-    if (!response.ok) throw new Error("Error al actualizar el libro");
-    let data = await response.json();
-    console.log(data);
-    return data;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error al actualizar ${entityName} con ID ${id}: ${errorText}`);
+    }
+
+    // ✅ Revisar si hay contenido
+    const text = await response.text();
+    if (text) {
+      const json = JSON.parse(text);
+      return json.data as T;
+    } else {
+      console.warn("⚠️ La respuesta del update no contiene cuerpo");
+      return null;
+    }
   } catch (error) {
-    return error;
+    console.error("Error en update:", error);
+    return null;
   }
 };
-
-export const deleteBook = async (id: string) => {
+/**
+ * DELETE - Eliminar
+ */
+export const remove = async (
+  entityName: string,
+  id: number | string
+): Promise<boolean> => {
   try {
-    const response = await fetch(API_BASE_URL + id, {
+    const response = await fetch(`${API_BASE_URL}/${entityName}/${id}`, {
       method: "DELETE",
     });
 
-    if (!response.ok) throw new Error("Error al eliminar el libro");
-    let data = await response.json();
-    console.log(data);
-    return data;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error al eliminar ${entityName} con ID ${id}: ${errorText}`);
+    }
+
+    const json = await response.json();
+    return json.success === true; // ✅ usa 'success' del backend
   } catch (error) {
-    return error;
+    console.error("Error en delete:", error);
+    return false;
   }
 };
