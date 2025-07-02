@@ -11,83 +11,85 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { FormStackParamsList, PersonStackParamsList } from "../../navigations/types";
+import { RolStackParamsList } from "../../navigations/types";
 import { getAllEntity, remove } from "../../api/apiService";
-import { IForm } from "../../api/types/IForm";
+
 import CardGeneric from "../../components/CardGeneric";
+import { IRol } from "../../api/types/IRol";
 import Toast from "react-native-toast-message";
 
-type FormScreenNavigationProp = NativeStackNavigationProp<
-  FormStackParamsList,
-  "FormList"
+type RolScreenNavigationProp = NativeStackNavigationProp<
+  RolStackParamsList,
+  "RolList"
 >;
 
-const FormList = () => {
-  const navigation = useNavigation<FormScreenNavigationProp>();
-  const [forms, setForms] = useState<IForm[]>([]);
+const RolList = () => {
+  const navigation = useNavigation<RolScreenNavigationProp>();
+  const [roles, setRoles] = useState<IRol[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false); // ⬅️ para botón
+  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchForms = useCallback(async () => {
+  const fetchRoles = useCallback(async () => {
     if (!loading) setRefreshing(true);
     setLoading(true);
-    const result = await getAllEntity("Form");
-    setForms(result);
+    const result = await getAllEntity("Rol");
+    setRoles(result);
     setLoading(false);
-    setRefreshing(false); // ⬅️ apaga loading del botón
+    setRefreshing(false); 
   }, []);
 
   useEffect(() => {
-    fetchForms();
-  }, [fetchForms]);
+    fetchRoles();
+  }, [fetchRoles]);
 
+   // Lógica para eliminar
   const handleDelete = async (id: number) => {
-        Alert.alert(
-          "Confirmación",
-          "¿Estás seguro de eliminar este registro?",
-          [
-                {
-                  text: "Cancelar",
-                  style: "cancel",
-                },
-                {
-                  text: "Eliminar",
-                  style: "destructive",
-                  onPress: async () => {
-                    const success = await remove("Form", id);
-                    if (success) {
-                      Toast.show({
-                        type: "success",
-                        text1: "Operación exitosa",
-                        text2: "El registro se eliminó correctamente"
-                      });
-                      fetchForms();
-                    } else {
-                      Toast.show({
-                        type: "error",
-                        text1: "Error",
-                        text2: "No se pudo eliminar el registro"
-                      });
-                    }
-                  },
-                },
-              ]
-            );
-          };
+    Alert.alert(
+      "Confirmación",
+      "¿Estás seguro de eliminar este registro?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Eliminar",
+          style: "destructive",
+          onPress: async () => {
+            const success = await remove("Rol", id);
+            if (success) {
+              Toast.show({
+                type: "success",
+                text1: "Operación exitosa",
+                text2: "El registro se eliminó correctamente"
+              });
+              fetchRoles();
+            } else {
+              Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "No se pudo eliminar el registro"
+              });
+            }
+          },
+        },
+      ]
+    );
+  };
   return (
     <View style={{ flex: 1 }}>
       {/* Contenedor de botones */}
       <View style={styles.buttonsRow}>
         <TouchableOpacity
           style={styles.buttonBlue}
-          onPress={() => navigation.navigate("FormSave")}
+          onPress={() => navigation.navigate("RolSave")}
         >
-          <Text style={styles.buttonText}>➕ Add Form</Text>
+          <Text style={styles.buttonText}>➕ Add Rol</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.buttonGreen}
-          onPress={fetchForms}
+          onPress={fetchRoles}
           disabled={refreshing}
         >
           {refreshing ? (
@@ -102,12 +104,12 @@ const FormList = () => {
         <ActivityIndicator size="large" color="#1e90ff" style={{ marginTop: 20 }} />
       ) : (
         <FlatList
-          data={forms}
+          data={roles}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <CardGeneric
             item={item}
-            onEdit={(id) => navigation.navigate("FormUpdate", { id: Number(id) })}
+            onEdit={(id) => navigation.navigate("RolUpdate", { id: Number(id) })}
             onDelete={(id) => handleDelete(Number(id))}
             />
           )}
@@ -146,4 +148,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormList;
+export default RolList;

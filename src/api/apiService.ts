@@ -57,16 +57,12 @@ export const getById = async <T>(entityName: string, id: number | string): Promi
 /**
  * PUT - Actualizar
  */
-/**
- * PUT - Actualizar
- */
 export const update = async <T>(
   entityName: string,
-  id: number | string,
   data: T
 ): Promise<T | null> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/${entityName}/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/${entityName}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -74,7 +70,7 @@ export const update = async <T>(
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Error al actualizar ${entityName} con ID ${id}: ${errorText}`);
+      throw new Error(`Error al actualizar ${entityName} : ${errorText}`);
     }
 
     // ✅ Revisar si hay contenido
@@ -91,6 +87,7 @@ export const update = async <T>(
     return null;
   }
 };
+
 /**
  * DELETE - Eliminar
  */

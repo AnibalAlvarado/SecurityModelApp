@@ -11,19 +11,19 @@ import {
   Switch,
 } from "react-native";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
-import { FormStackParamsList} from "../../navigations/types";
+import { ModuleStackParamsList} from "../../navigations/types";
 import { getById, update } from "../../api/apiService";
-import { IForm } from "../../api/types/IForm";
+import { IModule } from "../../api/types/IModule";
 import Toast from "react-native-toast-message";
 
-type DetailsRouteProp = RouteProp<FormStackParamsList, "FormUpdate">;
+type DetailsRouteProp = RouteProp<ModuleStackParamsList, "ModuleUpdate">;
 
-const FormUpdateScreen: React.FC = () => {
+const ModuleUpdateScreen: React.FC = () => {
   const route = useRoute<DetailsRouteProp>();
   const navigation = useNavigation();
   const { id } = route.params;
 
-  const [form, setForm] = useState<IForm>({
+  const [form, setForm] = useState<IModule>({
     id,
     name: "",
     description: "",
@@ -31,23 +31,23 @@ const FormUpdateScreen: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const fetchForm = async () => {
+  const fetchModule = async () => {
     try {
-      const data = await getById<IForm>("Form", id);
-      console.log("Form cargado:", data);
+      const data = await getById<IModule>("Module", id);
+      console.log("Module cargado:", data);
       if (data) {
         setForm(data);
       }
       Toast.show({
-          type: "success",
-          text1: "Éxito",
-          text2: "Formulario cargado correctamente",
+        type: "success",
+        text1: "Éxito",
+        text2: "Módulo cargado correctamente",
       });
     } catch (error) {
       Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "No se pudo cargar el formulario.",
+        type: "error",
+        text1: "Error",
+        text2: "No se pudo cargar el módulo.",
       });
     } finally {
       setLoading(false);
@@ -55,28 +55,28 @@ const FormUpdateScreen: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchForm();
+    fetchModule();
   }, []);
 
-  const handleChange = (field: keyof IForm, value: string | boolean) => {
+  const handleChange = (field: keyof IModule, value: string | boolean) => {
     setForm({ ...form, [field]: value });
   };
 
 const handleSubmit = async () => {
   try {
-    const result = await update("Form", form);
+    const result = await update("Module", form);
     console.log("Resultado del update:", result);
     Toast.show({
       type: "success",
       text1: "Éxito",
-      text2: "Formulario actualizado correctamente",
+      text2: "Módulo actualizado correctamente",
     });
     navigation.goBack();
   } catch (error) {
     Toast.show({
       type: "error",
       text1: "Error",
-      text2: "No se pudo actualizar el formulario.",
+      text2: "No se pudo actualizar el módulo.",
     });
   }
 };
@@ -132,4 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormUpdateScreen;
+export default ModuleUpdateScreen;

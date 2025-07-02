@@ -11,19 +11,19 @@ import {
   Switch,
 } from "react-native";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
-import { FormStackParamsList} from "../../navigations/types";
+import { RolStackParamsList } from "../../navigations/types";
 import { getById, update } from "../../api/apiService";
-import { IForm } from "../../api/types/IForm";
+import { IRol } from "../../api/types/IRol";
 import Toast from "react-native-toast-message";
 
-type DetailsRouteProp = RouteProp<FormStackParamsList, "FormUpdate">;
+type DetailsRouteProp = RouteProp<RolStackParamsList, "RolUpdate">;
 
-const FormUpdateScreen: React.FC = () => {
+const RolUpdateScreen: React.FC = () => {
   const route = useRoute<DetailsRouteProp>();
   const navigation = useNavigation();
   const { id } = route.params;
 
-  const [form, setForm] = useState<IForm>({
+  const [form, setForm] = useState<IRol>({
     id,
     name: "",
     description: "",
@@ -31,52 +31,51 @@ const FormUpdateScreen: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const fetchForm = async () => {
+  const fetchRol = async () => {
     try {
-      const data = await getById<IForm>("Form", id);
-      console.log("Form cargado:", data);
+      const data = await getById<IRol>("Rol", id);
+      console.log("Rol cargado:", data);
       if (data) {
         setForm(data);
       }
       Toast.show({
-          type: "success",
-          text1: "Éxito",
-          text2: "Formulario cargado correctamente",
-      });
+        type: "success",
+        text1: "Éxito",
+        text2: "Rol cargado correctamente",
+    });
     } catch (error) {
-      Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "No se pudo cargar el formulario.",
-      });
+        Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No se pudo cargar el rol.",
+        });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchForm();
+    fetchRol();
   }, []);
 
-  const handleChange = (field: keyof IForm, value: string | boolean) => {
+  const handleChange = (field: keyof IRol, value: string | boolean) => {
     setForm({ ...form, [field]: value });
   };
 
 const handleSubmit = async () => {
   try {
-    const result = await update("Form", form);
-    console.log("Resultado del update:", result);
+    const result = await update("Rol", form);
     Toast.show({
-      type: "success",
-      text1: "Éxito",
-      text2: "Formulario actualizado correctamente",
+    type: "success",
+    text1: "Éxito",
+    text2: "Rol actualizado correctamente",
     });
     navigation.goBack();
   } catch (error) {
     Toast.show({
       type: "error",
       text1: "Error",
-      text2: "No se pudo actualizar el formulario.",
+      text2: "No se pudo actualizar el rol.",
     });
   }
 };
@@ -132,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormUpdateScreen;
+export default RolUpdateScreen;

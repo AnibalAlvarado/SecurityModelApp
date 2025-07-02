@@ -5,6 +5,9 @@ import PersonList from '../screens/Person/PersonList';
 import FormList from '../screens/Form/FormList';
 import PersonStackNavigator from '../stacks/PersonStackNavigator';
 import FormStackNavigator from '../stacks/FormStackNavigator';
+import RolStackNavigator from '../stacks/RolStackNavigator';
+import ModuleList from '../screens/Module/ModuleList';
+import ModuleStackNavigator from '../stacks/ModuleStackNavigator';
 // import UserList from '../screens/UserList';
 // import RolList from '../screens/RolList';
 // Añade tus otras vistas aquí
@@ -20,9 +23,9 @@ const SidebarNavigator = () => {
     <Drawer.Navigator initialRouteName="Person">
       <Drawer.Screen name="Person" component={PersonStackNavigator} />
       <Drawer.Screen name="Formularios" component={FormStackNavigator} />
+      <Drawer.Screen name="Roles" component={RolStackNavigator} />
+      <Drawer.Screen name="Módulos" component={ModuleStackNavigator} />
       {/* <Drawer.Screen name="Usuarios" component={UserList} />
-      <Drawer.Screen name="Módulos" component={ModuleList} />
-      <Drawer.Screen name="Roles" component={RolList} />
       <Drawer.Screen name="Permisos" component={PermissionList} />
       <Drawer.Screen name="Form-Module" component={RolFormPermissionList} />
       <Drawer.Screen name="Rol-Usuario" component={RolUserList} /> */}

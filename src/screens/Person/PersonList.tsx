@@ -6,25 +6,28 @@
     StyleSheet,
     FlatList,
     ActivityIndicator,
+    Alert,
   } from "react-native";
   import { useNavigation } from "@react-navigation/native";
   import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
   import { PersonStackParamsList } from "../../navigations/types";
-  import { getAllEntity } from "../../api/apiService";
+  import { getAllEntity, remove } from "../../api/apiService";
   import { IPerson } from "../../api/types/IPerson";
   import CardGeneric from "../../components/CardGeneric";
+import Toast from "react-native-toast-message";
 
   type PersonScreenNavigationProp = NativeStackNavigationProp<
     PersonStackParamsList,
     "PersonList"
   >;
 
+
   const PersonList = () => {
     const navigation = useNavigation<PersonScreenNavigationProp>();
     const [persons, setPersons] = useState<IPerson[]>([]);
     const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false); // ⬅️ para botón
+    const [refreshing, setRefreshing] = useState(false);
 
     const fetchPersons = useCallback(async () => {
       if (!loading) setRefreshing(true);
@@ -32,13 +35,46 @@
       const result = await getAllEntity("Person");
       setPersons(result);
       setLoading(false);
-      setRefreshing(false); // ⬅️ apaga loading del botón
+      setRefreshing(false); 
     }, []);
 
     useEffect(() => {
       fetchPersons();
     }, [fetchPersons]);
 
+  const handleDelete = async (id: number) => {
+    Alert.alert(
+      "Confirmación",
+      "¿Estás seguro de eliminar este registro?",
+      [
+            {
+              text: "Cancelar",
+              style: "cancel",
+            },
+            {
+              text: "Eliminar",
+              style: "destructive",
+              onPress: async () => {
+                const success = await remove("Person", id);
+                if (success) {
+                  Toast.show({
+                    type: "success",
+                    text1: "Operación exitosa",
+                    text2: "El registro se eliminó correctamente"
+                  });
+                  fetchPersons();
+                } else {
+                  Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: "No se pudo eliminar el registro"
+                  });
+                }
+              },
+            },
+          ]
+        );
+      };
     return (
       <View style={{ flex: 1 }}>
         {/* Contenedor de botones */}
@@ -73,7 +109,7 @@
               <CardGeneric
                 item={item}
                 onEdit={(id) => navigation.navigate("PersonUpdate", { id: Number(id) })}
-                onDelete={(id) => console.log("Eliminar", id)}
+                onDelete={(id) => handleDelete(Number(id))}
               />
             )}
           />

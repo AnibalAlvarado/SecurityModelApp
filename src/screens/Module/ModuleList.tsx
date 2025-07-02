@@ -11,83 +11,84 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { FormStackParamsList, PersonStackParamsList } from "../../navigations/types";
+import { ModuleStackParamsList } from "../../navigations/types";
 import { getAllEntity, remove } from "../../api/apiService";
-import { IForm } from "../../api/types/IForm";
+
 import CardGeneric from "../../components/CardGeneric";
+import { IModule } from "../../api/types/IModule";
 import Toast from "react-native-toast-message";
 
-type FormScreenNavigationProp = NativeStackNavigationProp<
-  FormStackParamsList,
-  "FormList"
+type ModuleScreenNavigationProp = NativeStackNavigationProp<
+  ModuleStackParamsList,
+  "ModuleList"
 >;
 
-const FormList = () => {
-  const navigation = useNavigation<FormScreenNavigationProp>();
-  const [forms, setForms] = useState<IForm[]>([]);
+const ModuleList = () => {
+  const navigation = useNavigation<ModuleScreenNavigationProp>();
+  const [modules, setModules] = useState<IModule[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false); // ⬅️ para botón
 
-  const fetchForms = useCallback(async () => {
+  const fetchModules = useCallback(async () => {
     if (!loading) setRefreshing(true);
     setLoading(true);
-    const result = await getAllEntity("Form");
-    setForms(result);
+    const result = await getAllEntity("Module");
+    setModules(result);
     setLoading(false);
     setRefreshing(false); // ⬅️ apaga loading del botón
   }, []);
 
   useEffect(() => {
-    fetchForms();
-  }, [fetchForms]);
+    fetchModules();
+  }, [fetchModules]);
 
   const handleDelete = async (id: number) => {
-        Alert.alert(
-          "Confirmación",
-          "¿Estás seguro de eliminar este registro?",
-          [
-                {
-                  text: "Cancelar",
-                  style: "cancel",
+      Alert.alert(
+        "Confirmación",
+        "¿Estás seguro de eliminar este registro?",
+        [
+              {
+                text: "Cancelar",
+                style: "cancel",
+              },
+              {
+                text: "Eliminar",
+                style: "destructive",
+                onPress: async () => {
+                  const success = await remove("Module", id);
+                  if (success) {
+                    Toast.show({
+                      type: "success",
+                      text1: "Operación exitosa",
+                      text2: "El registro se eliminó correctamente"
+                    });
+                    fetchModules();
+                  } else {
+                    Toast.show({
+                      type: "error",
+                      text1: "Error",
+                      text2: "No se pudo eliminar el registro"
+                    });
+                  }
                 },
-                {
-                  text: "Eliminar",
-                  style: "destructive",
-                  onPress: async () => {
-                    const success = await remove("Form", id);
-                    if (success) {
-                      Toast.show({
-                        type: "success",
-                        text1: "Operación exitosa",
-                        text2: "El registro se eliminó correctamente"
-                      });
-                      fetchForms();
-                    } else {
-                      Toast.show({
-                        type: "error",
-                        text1: "Error",
-                        text2: "No se pudo eliminar el registro"
-                      });
-                    }
-                  },
-                },
-              ]
-            );
-          };
+              },
+            ]
+          );
+        };
   return (
     <View style={{ flex: 1 }}>
       {/* Contenedor de botones */}
       <View style={styles.buttonsRow}>
         <TouchableOpacity
           style={styles.buttonBlue}
-          onPress={() => navigation.navigate("FormSave")}
+          onPress={() => navigation.navigate("ModuleSave")}
         >
-          <Text style={styles.buttonText}>➕ Add Form</Text>
+          <Text style={styles.buttonText}>➕ Add Module</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.buttonGreen}
-          onPress={fetchForms}
+          onPress={fetchModules}
           disabled={refreshing}
         >
           {refreshing ? (
@@ -102,12 +103,12 @@ const FormList = () => {
         <ActivityIndicator size="large" color="#1e90ff" style={{ marginTop: 20 }} />
       ) : (
         <FlatList
-          data={forms}
+          data={modules}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <CardGeneric
             item={item}
-            onEdit={(id) => navigation.navigate("FormUpdate", { id: Number(id) })}
+            onEdit={(id) => navigation.navigate("ModuleUpdate", { id: Number(id) })}
             onDelete={(id) => handleDelete(Number(id))}
             />
           )}
@@ -146,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormList;
+export default ModuleList;

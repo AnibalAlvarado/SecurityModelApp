@@ -14,6 +14,7 @@ import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import { PersonStackParamsList } from "../../navigations/types";
 import { getById, update } from "../../api/apiService";
 import { IPerson } from "../../api/types/IPerson";
+import Toast from "react-native-toast-message";
 
 type DetailsRouteProp = RouteProp<PersonStackParamsList, "PersonUpdate">;
 
@@ -34,12 +35,20 @@ const PersonUpdateScreen: React.FC = () => {
   const fetchPerson = async () => {
     try {
       const data = await getById<IPerson>("Person", id);
-      console.log("Persona cargada:", data);
       if (data) {
         setForm(data);
       }
+      Toast.show({
+              type: "success",
+              text1: "Éxito",
+              text2: "Persona cargada correctamente",
+          });
     } catch (error) {
-      Alert.alert("Error", "No se pudo cargar la persona.");
+       Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: "No se pudo cargar la persona.",
+              });
     } finally {
       setLoading(false);
     }
@@ -55,12 +64,19 @@ const PersonUpdateScreen: React.FC = () => {
 
 const handleSubmit = async () => {
   try {
-    const result = await update("person", id, form);
-    console.log("Resultado del update:", result);
-    Alert.alert("Éxito", "Persona actualizada correctamente");
+    const result = await update("Person", form);
+    Toast.show({
+        type: "success",
+        text1: "Éxito",
+        text2: "Persona actualizada correctamente",
+        });
     navigation.goBack();
   } catch (error) {
-    Alert.alert("Error", "No se pudo actualizar la persona.");
+    Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No se pudo actualizar la persona.",
+    });
   }
 };
 
