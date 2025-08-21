@@ -27,11 +27,12 @@ const SidebarNavigator = () => {
       <Drawer.Screen name="Roles" component={RolStackNavigator} />
       <Drawer.Screen name="Módulos" component={ModuleStackNavigator} />
       <Drawer.Screen name="Usuarios" component={UserStackNavigator} />
+      <Drawer.Screen name="Rol-Usuario" component={RolUserStackNavigator} /> 
       {
       /* 
       <Drawer.Screen name="Permisos" component={PermissionList} />
       <Drawer.Screen name="Form-Module" component={RolFormPermissionList} />
-      <Drawer.Screen name="Rol-Usuario" component={RolUserList} /> */}
+      */}
     </Drawer.Navigator>
   );
 };
