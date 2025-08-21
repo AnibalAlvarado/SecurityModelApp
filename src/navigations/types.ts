@@ -21,3 +21,9 @@ export type ModuleStackParamsList = {
   ModuleUpdate: { id: number };
   ModuleSave: undefined;
 };
+
+export type UserStackParamsList = {
+  UserList: undefined;
+  UserUpdate: { id: number };
+  UserSave: undefined;
+};

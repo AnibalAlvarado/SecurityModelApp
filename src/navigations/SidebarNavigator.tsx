@@ -8,6 +8,7 @@ import FormStackNavigator from '../stacks/FormStackNavigator';
 import RolStackNavigator from '../stacks/RolStackNavigator';
 import ModuleList from '../screens/Module/ModuleList';
 import ModuleStackNavigator from '../stacks/ModuleStackNavigator';
+import UserStackNavigator from '../stacks/UserStackNavigator';
 // import UserList from '../screens/UserList';
 // import RolList from '../screens/RolList';
 // Añade tus otras vistas aquí
@@ -25,7 +26,9 @@ const SidebarNavigator = () => {
       <Drawer.Screen name="Formularios" component={FormStackNavigator} />
       <Drawer.Screen name="Roles" component={RolStackNavigator} />
       <Drawer.Screen name="Módulos" component={ModuleStackNavigator} />
-      {/* <Drawer.Screen name="Usuarios" component={UserList} />
+      <Drawer.Screen name="Usuarios" component={UserStackNavigator} />
+      {
+      /* 
       <Drawer.Screen name="Permisos" component={PermissionList} />
       <Drawer.Screen name="Form-Module" component={RolFormPermissionList} />
       <Drawer.Screen name="Rol-Usuario" component={RolUserList} /> */}
