@@ -1,9 +1,8 @@
 export interface IRolUser{
   id: number;
   rolId: number 
-  rolName: string
+  rolName?: string
   userId:number 
-  userName: string
+  userName?: string
   asset : boolean;
-  isDeleted: boolean;
 }

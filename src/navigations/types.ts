@@ -27,3 +27,9 @@ export type UserStackParamsList = {
   UserUpdate: { id: number };
   UserSave: undefined;
 };
+
+export type RolUserStackParamsList = {
+  RolUserList: undefined;
+  RolUserUpdate: { id: number };
+  RolUserSave: undefined;
+};
